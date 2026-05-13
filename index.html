@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cositas de Ani</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="admin.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header Premium -->
+    <header class="header">
+        <div class="header-inner">
+            <h1 class="logo">Cositas <span>de Ani</span></h1>
+            <div class="header-controls">
+                <div class="search-wrapper">
+                    <input type="text" id="searchInput" placeholder="Buscar productos..." class="search-input">
+                    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="M21 21l-4.35-4.35"></path>
+                    </svg>
+                </div>
+                <button id="adminBtn" class="admin-btn" title="Administrar productos">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"></path>
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1Z"></path>
+                    </svg>
+                </button>
+                <button id="themeToggle" class="theme-toggle" title="Cambiar tema">
+                    <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <div class="categories">
+            <button class="category-btn active" data-category="all">Todos</button>
+            <button class="category-btn" data-category="general">General</button>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <h2 class="hero-title">Colección</h2>
+        <p class="hero-subtitle">Selección exclusiva de productos para ti</p>
+    </section>
+
+    <!-- Grid de productos -->
+    <main class="main">
+        <div id="productsGrid" class="products-grid">
+        </div>
+        <div id="noResults" class="no-results" style="display: none;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+            <p>No se encontraron productos</p>
+        </div>
+    </main>
+
+    <!-- Modal de producto (ver detalles) -->
+    <div id="modal" class="modal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <button class="modal-close">&times;</button>
+            <div class="modal-body">
+                <div class="modal-image-section">
+                    <img id="modalImage" src="" alt="Producto" class="modal-image">
+                </div>
+                <div class="modal-info-section">
+                    <span id="modalCategory" class="modal-badge">General</span>
+                    <h2 id="modalName" class="modal-title">Nombre del Producto</h2>
+                    <p id="modalPrice" class="modal-price">$0.00</p>
+                    <div class="modal-divider"></div>
+                    <p id="modalDescription" class="modal-description">Descripción del producto</p>
+                    <div class="modal-actions">
+                        <a id="modalWhatsapp" href="#" target="_blank" class="btn-whatsapp">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                            </svg>
+                            Comprar por WhatsApp
+                        </a>
+                        <button id="editProductBtn" class="btn-edit-modal">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                            </svg>
+                            Editar
+                        </button>
+                        <button id="deleteProductBtn" class="btn-delete-modal">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="3 6 5 6 21 6"></polyline>
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                            </svg>
+                            Eliminar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Admin (Agregar/Editar) -->
+    <div id="adminModal" class="modal admin-modal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content admin-content">
+            <button class="modal-close admin-close">&times;</button>
+            <div class="admin-header">
+                <h2 id="adminTitle" class="admin-title">Agregar Producto</h2>
+            </div>
+            <form id="productForm" class="product-form">
+                <div class="form-group">
+                    <label for="productName">Nombre del Producto</label>
+                    <input type="text" id="productName" required placeholder="Ej: Reloj de Oro">
+                </div>
+                <div class="form-group">
+                    <label for="productPrice">Precio</label>
+                    <input type="text" id="productPrice" required placeholder="Ej: $149.99">
+                </div>
+                <div class="form-group">
+                    <label for="productDescription">Descripción</label>
+                    <textarea id="productDescription" rows="3" placeholder="Descripción detallada del producto..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="productCategory">Categoría</label>
+                    <select id="productCategory">
+                        <option value="general">General</option>
+                        <option value="nuevo">Nuevo</option>
+                        <option value="oferta">Oferta</option>
+                        <option value="popular">Popular</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="productImage">Imagen</label>
+                    <select id="productImage" required>
+                        <option value="">Selecciona una imagen...</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-cancel" onclick="cerrarAdminModal()">Cancelar</button>
+                    <button type="submit" class="btn-save">Guardar Producto</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin Panel (Lista de productos) -->
+    <div id="adminPanel" class="admin-panel">
+        <div class="admin-panel-overlay"></div>
+        <div class="admin-panel-content">
+            <div class="admin-panel-header">
+                <h2>Administrar Productos</h2>
+                <div class="admin-panel-actions">
+                    <button id="addProductBtn" class="btn-add-product">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        Agregar Producto
+                    </button>
+                    <button class="admin-panel-close">&times;</button>
+                </div>
+            </div>
+            <div id="adminProductList" class="admin-product-list">
+                <!-- Lista de productos para admin -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast de notificación -->
+    <div id="toast" class="toast"></div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2025 Cositas de Ani. Todos los derechos reservados.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
