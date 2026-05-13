@@ -31,6 +31,16 @@
                     </svg>
                     Ver Catálogo
                 </a>
+                <button class="nav-item" id="themeToggle" title="Cambiar tema">
+                    <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path>
+                    </svg>
+                    Cambiar tema
+                </button>
                 <button class="nav-item logout" id="logoutBtn">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"></path>
@@ -111,19 +121,19 @@
                         <label for="productImage">Imagen</label>
                         <select id="productImage" required>
                             <option value="">Selecciona una imagen...</option>
-                            <option value="images/1001647064.jpg">1001647064.jpg</option>
-                            <option value="images/1001648949.png">1001648949.png</option>
-                            <option value="images/1001648950.png">1001648950.png</option>
-                            <option value="images/1001648951.png">1001648951.png</option>
-                            <option value="images/1001656365.jpg">1001656365.jpg</option>
-                            <option value="images/1001671617.jpg">1001671617.jpg</option>
-                            <option value="images/1001675284.png">1001675284.png</option>
-                            <option value="images/1001675285.png">1001675285.png</option>
-                            <option value="images/1001675302.png">1001675302.png</option>
-                            <option value="images/1001675303.png">1001675303.png</option>
-                            <option value="images/1001677539.jpg">1001677539.jpg</option>
-                            <option value="images/1001677540.jpg">1001677540.jpg</option>
-                            <option value="images/1001677541.jpg">1001677541.jpg</option>
+                            <option value="https://eodkpelkplrgqxbmkqka.supabase.co/storage/v1/object/public/product-images/1001647064.jpg">1001647064.jpg</option>
+                            <option value="https://eodkpelkplrgqxbmkqka.supabase.co/storage/v1/object/public/product-images/1001648949.png">1001648949.png</option>
+                            <option value="https://eodkpelkplrgqxbmkqka.supabase.co/storage/v1/object/public/product-images/1001648950.png">1001648950.png</option>
+                            <option value="https://eodkpelkplrgqxbmkqka.supabase.co/storage/v1/object/public/product-images/1001648951.png">1001648951.png</option>
+                            <option value="https://eodkpelkplrgqxbmkqka.supabase.co/storage/v1/object/public/product-images/1001656365.jpg">1001656365.jpg</option>
+                            <option value="https://eodkpelkplrgqxbmkqka.supabase.co/storage/v1/object/public/product-images/1001671617.jpg">1001671617.jpg</option>
+                            <option value="https://eodkpelkplrgqxbmkqka.supabase.co/storage/v1/object/public/product-images/1001675284.png">1001675284.png</option>
+                            <option value="https://eodkpelkplrgqxbmkqka.supabase.co/storage/v1/object/public/product-images/1001675285.png">1001675285.png</option>
+                            <option value="https://eodkpelkplrgqxbmkqka.supabase.co/storage/v1/object/public/product-images/1001675302.png">1001675302.png</option>
+                            <option value="https://eodkpelkplrgqxbmkqka.supabase.co/storage/v1/object/public/product-images/1001675303.png">1001675303.png</option>
+                            <option value="https://eodkpelkplrgqxbmkqka.supabase.co/storage/v1/object/public/product-images/1001677539.jpg">1001677539.jpg</option>
+                            <option value="https://eodkpelkplrgqxbmkqka.supabase.co/storage/v1/object/public/product-images/1001677540.jpg">1001677540.jpg</option>
+                            <option value="https://eodkpelkplrgqxbmkqka.supabase.co/storage/v1/object/public/product-images/1001677541.jpg">1001677541.jpg</option>
                         </select>
                     </div>
                 </div>
@@ -140,10 +150,25 @@
 
     <script>
         const SUPABASE_URL = 'https://eodkpelkplrgqxbmkqka.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVvZGtwZWxrcGxyZ3F4Ym1rcWthIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg3MDU1MjksImV4cCI6MjA5NDI4MTUyOX0.ZWNwMsCZO6P4VcVUjOB9Zt7-95qoWziYuf21fHo7mRU';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVvZGtwZWxrcGxyZ3F4Ym1rcWthIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg3MDU1MjksImV4cCI6MjA5NDI4MTUyOX0.ZWNwMsCZO6P4VcVUjOB9Zt7-95qoWziYuf21fHo7mRU';;
+
+        function initTheme() {
+            const savedTheme = localStorage.getItem('catalogue-theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('catalogue-theme', newTheme);
+        }
+
+        initTheme();
 
         const { createClient } = window.supabase;
-        const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         const productsGrid = document.getElementById('productsGrid');
         const loadingState = document.getElementById('loadingState');
@@ -156,7 +181,7 @@
         let editingProductId = null;
 
         async function checkAuth() {
-            const { data: { session } } = await supabase.auth.getSession();
+            const { data: { session } } = await supabaseClient.auth.getSession();
             if (!session) {
                 window.location.href = 'index.html';
             }
@@ -166,7 +191,7 @@
             loadingState.style.display = 'flex';
             productsGrid.innerHTML = '';
 
-            const { data: products, error } = await supabase
+            const { data: products, error } = await supabaseClient
                 .from('products')
                 .select('*')
                 .order('created_at', { ascending: false });
@@ -225,7 +250,7 @@
         }
 
         async function editProduct(id) {
-            const { data: product } = await supabase
+            const { data: product } = await supabaseClient
                 .from('products')
                 .select('*')
                 .eq('id', id)
@@ -247,7 +272,7 @@
 
         async function deleteProduct(id) {
             if (confirm('¿Estás seguro de eliminar este producto?')) {
-                const { error } = await supabase
+                const { error } = await supabaseClient
                     .from('products')
                     .delete()
                     .eq('id', id);
@@ -275,12 +300,12 @@
             let result;
             if (editingProductId) {
                 product.updated_at = new Date().toISOString();
-                result = await supabase
+                result = await supabaseClient
                     .from('products')
                     .update(product)
                     .eq('id', editingProductId);
             } else {
-                result = await supabase
+                result = await supabaseClient
                     .from('products')
                     .insert([product]);
             }
@@ -307,8 +332,10 @@
         document.querySelector('.modal-form-overlay').addEventListener('click', closeModal);
         productForm.addEventListener('submit', saveProduct);
 
+        document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+
         document.getElementById('logoutBtn').addEventListener('click', async () => {
-            await supabase.auth.signOut();
+            await supabaseClient.auth.signOut();
             window.location.href = 'index.html';
         });
 

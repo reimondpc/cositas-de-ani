@@ -1,9 +1,8 @@
-<script>
     const SUPABASE_URL = 'https://eodkpelkplrgqxbmkqka.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVvZGtwZWxrcGxyZ3F4Ym1rcWthIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg3MDU1MjksImV4cCI6MjA5NDI4MTUyOX0.ZWNwMsCZO6P4VcVUjOB9Zt7-95qoWziYuf21fHo7mRU';
 
     const { createClient } = window.supabase;
-    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     const WHATSAPP_NUMBER = "18292727257";
 
@@ -98,7 +97,7 @@
     }
 
     async function loadProducts() {
-        const { data, error } = await supabase
+        const { data, error } = await supabaseClient
             .from('products')
             .select('*')
             .order('created_at', { ascending: false });
@@ -166,4 +165,3 @@
         initTheme();
         loadProducts();
     });
-</script>
