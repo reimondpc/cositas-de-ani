@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Cositas de Ani</title>
+    <link rel="stylesheet" href="admin.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <div class="admin-layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>Cositas de Ani</h2>
+                <span>Panel Admin</span>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                    </svg>
+                    Productos
+                </a>
+                <a href="../index.html" class="nav-item" target="_blank">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        <path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                    </svg>
+                    Ver Catálogo
+                </a>
+                <button class="nav-item logout" id="logoutBtn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+                    Cerrar Sesión
+                </button>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="content-header">
+                <h1>Productos</h1>
+                <button class="btn-add" id="addProductBtn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    Agregar Producto
+                </button>
+            </header>
+
+            <div class="products-grid" id="productsGrid">
+                <!-- Products will be loaded here -->
+            </div>
+
+            <div id="loadingState" class="loading-state">
+                <div class="spinner-large"></div>
+                <p>Cargando productos...</p>
+            </div>
+
+            <div id="emptyState" class="empty-state" style="display: none;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+                </svg>
+                <p>No hay productos aún</p>
+                <span>Agrega tu primer producto para comenzar</span>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal Form -->
+    <div id="productModal" class="modal-form">
+        <div class="modal-form-overlay"></div>
+        <div class="modal-form-content">
+            <div class="modal-form-header">
+                <h2 id="modalTitle">Agregar Producto</h2>
+                <button class="modal-form-close" id="closeModalBtn">&times;</button>
+            </div>
+            <form id="productForm">
+                <input type="hidden" id="productId">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="productName">Nombre del Producto</label>
+                        <input type="text" id="productName" required placeholder="Ej: Reloj de Oro">
+                    </div>
+                    <div class="form-group">
+                        <label for="productPrice">Precio</label>
+                        <input type="text" id="productPrice" required placeholder="Ej: $149.99">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="productDescription">Descripción</label>
+                    <textarea id="productDescription" rows="3" placeholder="Descripción del producto..."></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="productCategory">Categoría</label>
+                        <select id="productCategory">
+                            <option value="general">General</option>
+                            <option value="nuevo">Nuevo</option>
+                            <option value="oferta">Oferta</option>
+                            <option value="popular">Popular</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="productImage">Imagen</label>
+                        <select id="productImage" required>
+                            <option value="">Selecciona una imagen...</option>
+                            <option value="images/1001647064.jpg">1001647064.jpg</option>
+                            <option value="images/1001648949.png">1001648949.png</option>
+                            <option value="images/1001648950.png">1001648950.png</option>
+                            <option value="images/1001648951.png">1001648951.png</option>
+                            <option value="images/1001656365.jpg">1001656365.jpg</option>
+                            <option value="images/1001671617.jpg">1001671617.jpg</option>
+                            <option value="images/1001675284.png">1001675284.png</option>
+                            <option value="images/1001675285.png">1001675285.png</option>
+                            <option value="images/1001675302.png">1001675302.png</option>
+                            <option value="images/1001675303.png">1001675303.png</option>
+                            <option value="images/1001677539.jpg">1001677539.jpg</option>
+                            <option value="images/1001677540.jpg">1001677540.jpg</option>
+                            <option value="images/1001677541.jpg">1001677541.jpg</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-cancel" id="cancelBtn">Cancelar</button>
+                    <button type="submit" class="btn-save" id="saveBtn">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="toast"></div>
+
+    <script>
+        const SUPABASE_URL = 'https://fnjjzmgnlpimgecxmnnu.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZuamp6bWdubHBpbWdlY3htbm51Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg2OTQzMjUsImV4cCI6MjA5NDI3MDMyNX0.GrybkvP0s3cY6FUcs1rdgZqi24bs_pyzQ6IfS0HIwd4';
+
+        const { createClient } = window.supabase;
+        const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        const productsGrid = document.getElementById('productsGrid');
+        const loadingState = document.getElementById('loadingState');
+        const emptyState = document.getElementById('emptyState');
+        const productModal = document.getElementById('productModal');
+        const productForm = document.getElementById('productForm');
+        const modalTitle = document.getElementById('modalTitle');
+        const toast = document.getElementById('toast');
+
+        let editingProductId = null;
+
+        async function checkAuth() {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) {
+                window.location.href = 'index.html';
+            }
+        }
+
+        async function loadProducts() {
+            loadingState.style.display = 'flex';
+            productsGrid.innerHTML = '';
+
+            const { data: products, error } = await supabase
+                .from('products')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            loadingState.style.display = 'none';
+
+            if (error) {
+                showToast('Error al cargar productos', 'error');
+                return;
+            }
+
+            if (products.length === 0) {
+                emptyState.style.display = 'flex';
+                return;
+            }
+
+            emptyState.style.display = 'none';
+            productsGrid.innerHTML = products.map(product => `
+                <div class="product-card-admin">
+                    <img src="${product.image}" alt="${product.name}" class="product-img">
+                    <div class="product-info-admin">
+                        <h3>${product.name}</h3>
+                        <span class="product-price">${product.price}</span>
+                        <span class="product-category">${product.category}</span>
+                    </div>
+                    <div class="product-actions-admin">
+                        <button class="btn-edit" onclick="editProduct('${product.id}')">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"></path>
+                                <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                            </svg>
+                        </button>
+                        <button class="btn-delete" onclick="deleteProduct('${product.id}')">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="3 6 5 6 21 6"></polyline>
+                                <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function openModal(isEdit = false) {
+            editingProductId = null;
+            productForm.reset();
+            modalTitle.textContent = isEdit ? 'Editar Producto' : 'Agregar Producto';
+            productModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            productModal.classList.remove('active');
+            document.body.style.overflow = '';
+            editingProductId = null;
+        }
+
+        async function editProduct(id) {
+            const { data: product } = await supabase
+                .from('products')
+                .select('*')
+                .eq('id', id)
+                .single();
+
+            if (product) {
+                editingProductId = id;
+                document.getElementById('productId').value = product.id;
+                document.getElementById('productName').value = product.name;
+                document.getElementById('productPrice').value = product.price;
+                document.getElementById('productDescription').value = product.description || '';
+                document.getElementById('productCategory').value = product.category;
+                document.getElementById('productImage').value = product.image;
+                modalTitle.textContent = 'Editar Producto';
+                productModal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        async function deleteProduct(id) {
+            if (confirm('¿Estás seguro de eliminar este producto?')) {
+                const { error } = await supabase
+                    .from('products')
+                    .delete()
+                    .eq('id', id);
+
+                if (error) {
+                    showToast('Error al eliminar producto', 'error');
+                } else {
+                    showToast('Producto eliminado correctamente');
+                    loadProducts();
+                }
+            }
+        }
+
+        async function saveProduct(e) {
+            e.preventDefault();
+
+            const product = {
+                name: document.getElementById('productName').value,
+                price: document.getElementById('productPrice').value,
+                description: document.getElementById('productDescription').value,
+                category: document.getElementById('productCategory').value,
+                image: document.getElementById('productImage').value
+            };
+
+            let result;
+            if (editingProductId) {
+                product.updated_at = new Date().toISOString();
+                result = await supabase
+                    .from('products')
+                    .update(product)
+                    .eq('id', editingProductId);
+            } else {
+                result = await supabase
+                    .from('products')
+                    .insert([product]);
+            }
+
+            if (result.error) {
+                showToast('Error al guardar producto', 'error');
+            } else {
+                showToast(editingProductId ? 'Producto actualizado' : 'Producto agregado');
+                closeModal();
+                loadProducts();
+            }
+        }
+
+        function showToast(message, type = 'success') {
+            toast.textContent = message;
+            toast.className = 'toast ' + type;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        document.getElementById('addProductBtn').addEventListener('click', () => openModal(false));
+        document.getElementById('closeModalBtn').addEventListener('click', closeModal);
+        document.getElementById('cancelBtn').addEventListener('click', closeModal);
+        document.querySelector('.modal-form-overlay').addEventListener('click', closeModal);
+        productForm.addEventListener('submit', saveProduct);
+
+        document.getElementById('logoutBtn').addEventListener('click', async () => {
+            await supabase.auth.signOut();
+            window.location.href = 'index.html';
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && productModal.classList.contains('active')) {
+                closeModal();
+            }
+        });
+
+        checkAuth().then(loadProducts);
+    </script>
+</body>
+</html>
