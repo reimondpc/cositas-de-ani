@@ -119,22 +119,13 @@
                     </div>
                     <div class="form-group">
                         <label for="productImage">Imagen</label>
-                        <select id="productImage" required>
-                            <option value="">Selecciona una imagen...</option>
-                            <option value="https://eodkpelkplrgqxbmkqka.supabase.co/storage/v1/object/public/product-images/1001647064.jpg">1001647064.jpg</option>
-                            <option value="https://eodkpelkplrgqxbmkqka.supabase.co/storage/v1/object/public/product-images/1001648949.png">1001648949.png</option>
-                            <option value="https://eodkpelkplrgqxbmkqka.supabase.co/storage/v1/object/public/product-images/1001648950.png">1001648950.png</option>
-                            <option value="https://eodkpelkplrgqxbmkqka.supabase.co/storage/v1/object/public/product-images/1001648951.png">1001648951.png</option>
-                            <option value="https://eodkpelkplrgqxbmkqka.supabase.co/storage/v1/object/public/product-images/1001656365.jpg">1001656365.jpg</option>
-                            <option value="https://eodkpelkplrgqxbmkqka.supabase.co/storage/v1/object/public/product-images/1001671617.jpg">1001671617.jpg</option>
-                            <option value="https://eodkpelkplrgqxbmkqka.supabase.co/storage/v1/object/public/product-images/1001675284.png">1001675284.png</option>
-                            <option value="https://eodkpelkplrgqxbmkqka.supabase.co/storage/v1/object/public/product-images/1001675285.png">1001675285.png</option>
-                            <option value="https://eodkpelkplrgqxbmkqka.supabase.co/storage/v1/object/public/product-images/1001675302.png">1001675302.png</option>
-                            <option value="https://eodkpelkplrgqxbmkqka.supabase.co/storage/v1/object/public/product-images/1001675303.png">1001675303.png</option>
-                            <option value="https://eodkpelkplrgqxbmkqka.supabase.co/storage/v1/object/public/product-images/1001677539.jpg">1001677539.jpg</option>
-                            <option value="https://eodkpelkplrgqxbmkqka.supabase.co/storage/v1/object/public/product-images/1001677540.jpg">1001677540.jpg</option>
-                            <option value="https://eodkpelkplrgqxbmkqka.supabase.co/storage/v1/object/public/product-images/1001677541.jpg">1001677541.jpg</option>
-                        </select>
+                        <div class="image-upload-wrapper">
+                            <input type="file" id="productImageInput" accept="image/*" class="image-input">
+                            <div class="image-preview" id="imagePreview">
+                                <span>Selecciona o arrastra una imagen</span>
+                            </div>
+                            <input type="hidden" id="productImage">
+                        </div>
                     </div>
                 </div>
                 <div class="form-actions">
@@ -177,6 +168,9 @@
         const productForm = document.getElementById('productForm');
         const modalTitle = document.getElementById('modalTitle');
         const toast = document.getElementById('toast');
+        const imageInput = document.getElementById('productImageInput');
+        const imagePreview = document.getElementById('imagePreview');
+        const imageHidden = document.getElementById('productImage');
 
         let editingProductId = null;
 
@@ -238,6 +232,9 @@
         function openModal(isEdit = false) {
             editingProductId = null;
             productForm.reset();
+            imagePreview.innerHTML = '<span>Selecciona o arrastra una imagen</span>';
+            imagePreview.classList.remove('has-image');
+            imageHidden.value = '';
             modalTitle.textContent = isEdit ? 'Editar Producto' : 'Agregar Producto';
             productModal.classList.add('active');
             document.body.style.overflow = 'hidden';
@@ -263,7 +260,9 @@
                 document.getElementById('productPrice').value = product.price;
                 document.getElementById('productDescription').value = product.description || '';
                 document.getElementById('productCategory').value = product.category;
-                document.getElementById('productImage').value = product.image;
+                imageHidden.value = product.image;
+                imagePreview.innerHTML = `<img src="${product.image}" alt="Preview">`;
+                imagePreview.classList.add('has-image');
                 modalTitle.textContent = 'Editar Producto';
                 productModal.classList.add('active');
                 document.body.style.overflow = 'hidden';
@@ -286,15 +285,56 @@
             }
         }
 
+        imageInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    imagePreview.innerHTML = `<img src="${ev.target.result}" alt="Preview">`;
+                    imagePreview.classList.add('has-image');
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        async function uploadImage(file) {
+            const ext = file.name.split('.').pop();
+            const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+            const { data, error } = await supabaseClient.storage
+                .from('product-images')
+                .upload(fileName, file, {
+                    cacheControl: '3600',
+                    upsert: false
+                });
+            if (error) {
+                showToast('Error al subir imagen: ' + error.message, 'error');
+                return null;
+            }
+            return `${SUPABASE_URL}/storage/v1/object/public/product-images/${fileName}`;
+        }
+
         async function saveProduct(e) {
             e.preventDefault();
+
+            const file = imageInput.files[0];
+            let imageUrl = imageHidden.value;
+
+            if (file) {
+                showToast('Subiendo imagen...', 'success');
+                const uploadedUrl = await uploadImage(file);
+                if (!uploadedUrl) return;
+                imageUrl = uploadedUrl;
+            } else if (!imageUrl) {
+                showToast('Debes seleccionar una imagen', 'error');
+                return;
+            }
 
             const product = {
                 name: document.getElementById('productName').value,
                 price: document.getElementById('productPrice').value,
                 description: document.getElementById('productDescription').value,
                 category: document.getElementById('productCategory').value,
-                image: document.getElementById('productImage').value
+                image: imageUrl
             };
 
             let result;
