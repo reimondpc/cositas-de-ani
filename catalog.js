@@ -105,7 +105,36 @@
         if (!error && data) {
             products = data;
             renderizarProductos();
+            addProductStructuredData(data);
         }
+    }
+
+    function addProductStructuredData(products) {
+        const existing = document.getElementById('product-ld-json');
+        if (existing) existing.remove();
+        const script = document.createElement('script');
+        script.id = 'product-ld-json';
+        script.type = 'application/ld+json';
+        script.textContent = JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'ItemList',
+            'itemListElement': products.map((p, i) => ({
+                '@type': 'ListItem',
+                'position': i + 1,
+                'item': {
+                    '@type': 'Product',
+                    'name': p.name,
+                    'description': p.description || '',
+                    'offers': {
+                        '@type': 'Offer',
+                        'price': p.price.replace('RD$', ''),
+                        'priceCurrency': 'DOP',
+                        'availability': 'https://schema.org/InStock'
+                    }
+                }
+            }))
+        });
+        document.head.appendChild(script);
     }
 
     function abrirModal(productId) {
