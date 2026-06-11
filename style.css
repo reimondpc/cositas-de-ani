@@ -240,6 +240,8 @@ body::before {
     display: flex;
     gap: var(--space-sm);
     justify-content: center;
+    flex-wrap: wrap;
+    margin: var(--space-lg) var(--space-xl) 0;
 }
 
 .category-btn {
