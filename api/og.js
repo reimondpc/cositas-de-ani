@@ -27,6 +27,7 @@ module.exports = async (req, res) => {
   const title = `${product.name} - Cositas de Ani`;
   const desc = (product.description || 'Mirá este producto en Cositas de Ani').slice(0, 200);
   const url = `https://cositasdeani.shop/producto?id=${id}`;
+  const ogImageUrl = image ? `https://cositasdeani.shop/api/img?id=${encodeURIComponent(id)}` : '';
 
   if (esBot(req.headers['user-agent'] || '')) {
     res.writeHead(200, {
@@ -42,14 +43,17 @@ module.exports = async (req, res) => {
   <title>${title}</title>
   <meta property="og:title" content="${title}">
   <meta property="og:description" content="${desc}">
-  <meta property="og:image" content="${image}">
+  <meta property="og:image" content="${ogImageUrl}">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="${product.name}">
   <meta property="og:url" content="${url}">
   <meta property="og:type" content="product">
   <meta property="og:site_name" content="Cositas de Ani">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="${title}">
   <meta name="twitter:description" content="${desc}">
-  <meta name="twitter:image" content="${image}">
+  <meta name="twitter:image" content="${ogImageUrl}">
   <link rel="canonical" href="${url}">
 </head>
 <body></body>
