@@ -59,7 +59,7 @@ module.exports = async (req, res) => {
   <meta property="og:image:type" content="${imgType}">
   <meta property="og:image:alt" content="${product.name}">
   <meta property="og:url" content="${url}">
-  <meta property="og:type" content="product">
+  <meta property="og:type" content="website">
   <meta property="og:site_name" content="Cositas de Ani">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="${title}">
