@@ -27,7 +27,9 @@ module.exports = async (req, res) => {
   const title = `${product.name} - Cositas de Ani`;
   const desc = (product.description || 'Mirá este producto en Cositas de Ani').slice(0, 200);
   const url = `https://cositasdeani.shop/producto?id=${id}`;
-  const ogImageUrl = image ? `https://cositasdeani.shop/api/img?id=${encodeURIComponent(id)}` : '';
+  const proxied = `https://cositasdeani.shop/api/img?id=${encodeURIComponent(id)}`;
+  const ogImageUrl = image ? proxied : '';
+  const ogImageSecureUrl = image ? image : '';
 
   if (esBot(req.headers['user-agent'] || '')) {
     res.writeHead(200, {
@@ -44,6 +46,7 @@ module.exports = async (req, res) => {
   <meta property="og:title" content="${title}">
   <meta property="og:description" content="${desc}">
   <meta property="og:image" content="${ogImageUrl}">
+  <meta property="og:image:secure_url" content="${ogImageSecureUrl}">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:image:alt" content="${product.name}">
@@ -56,7 +59,12 @@ module.exports = async (req, res) => {
   <meta name="twitter:image" content="${ogImageUrl}">
   <link rel="canonical" href="${url}">
 </head>
-<body></body>
+<body style="margin:0;background:#1a1a2e;color:#fff;display:flex;align-items:center;justify-content:center;min-height:100vh;font-family:sans-serif;font-size:1.5rem;text-align:center;padding:20px">
+  <div>
+    <h1 style="font-size:2rem;margin:0 0 8px;color:#d4a853">Cositas de Ani</h1>
+    <p style="margin:0;opacity:0.8">${product.name}</p>
+  </div>
+</body>
 </html>`);
   } else {
     res.writeHead(302, {
