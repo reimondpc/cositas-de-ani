@@ -37,8 +37,6 @@ module.exports = async (req, res) => {
   <meta property="og:description" content="${desc}">
   <meta property="og:image" content="${ogImageUrl}">
   <meta property="og:image:secure_url" content="${ogImageUrl}">
-  <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="630">
   <meta property="og:image:alt" content="${product.name}">
   <meta property="og:url" content="${url}">
   <meta property="og:type" content="product">
