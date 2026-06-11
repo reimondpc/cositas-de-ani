@@ -4,12 +4,31 @@
     const { createClient } = window.supabase;
     const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    const WHATSAPP_NUMBER = "18292727257";
+    let WHATSAPP_NUMBER = "18292727257";
+    let siteSettings = null;
 
     // Theme
     function initTheme() {
         const savedTheme = localStorage.getItem('catalogue-theme') || 'dark';
         document.documentElement.setAttribute('data-theme', savedTheme);
+    }
+
+    function showToast(message) {
+        let toast = document.getElementById('toast-share');
+        if (!toast) {
+            toast = document.createElement('div');
+            toast.id = 'toast-share';
+            toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);padding:12px 24px;background:var(--bg-elevated);border:1px solid var(--gold);border-radius:8px;font-size:0.9rem;z-index:9999;opacity:0;transition:all 0.3s;pointer-events:none;';
+            document.body.appendChild(toast);
+        }
+        toast.textContent = message;
+        toast.style.transform = 'translateX(-50%) translateY(0)';
+        toast.style.opacity = '1';
+        clearTimeout(toast._timer);
+        toast._timer = setTimeout(() => {
+            toast.style.transform = 'translateX(-50%) translateY(100px)';
+            toast.style.opacity = '0';
+        }, 2500);
     }
 
     function toggleTheme() {
@@ -23,7 +42,6 @@
     // DOM Elements
     const productsGrid = document.getElementById('productsGrid');
     const searchInput = document.getElementById('searchInput');
-    const categoryButtons = document.querySelectorAll('.category-btn');
     const noResults = document.getElementById('noResults');
 
     const modal = document.getElementById('modal');
@@ -49,6 +67,25 @@
         return [];
     }
 
+    function shareUrl(producto) {
+        const url = `${window.location.origin}/producto?id=${producto.id}`;
+        if (navigator.share) {
+            navigator.share({
+                title: producto.name,
+                text: `Mira este producto: ${producto.name} - ${producto.price}`,
+                url: url
+            }).catch(() => {});
+        } else if (navigator.clipboard) {
+            navigator.clipboard.writeText(url).then(() => {
+                showToast('Link copiado al portapapeles');
+            }).catch(() => {
+                prompt('Copiá este link:', url);
+            });
+        } else {
+            prompt('Copiá este link:', url);
+        }
+    }
+
     function crearTarjetaProducto(producto) {
         const mensajeWhatsApp = `Hola, me interesa este producto: ${producto.name} - ${producto.price}`;
         const linkWhatsApp = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(mensajeWhatsApp)}`;
@@ -69,6 +106,15 @@
                     <div class="product-actions">
                         <button class="btn-details" onclick="abrirModal('${producto.id}')">
                             Ver detalles
+                        </button>
+                        <button class="btn-share" onclick="shareUrl(products.find(p => p.id === '${producto.id}'))" title="Compartir">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="18" cy="5" r="3"></circle>
+                                <circle cx="6" cy="12" r="3"></circle>
+                                <circle cx="18" cy="19" r="3"></circle>
+                                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                            </svg>
                         </button>
                         <a href="${linkWhatsApp}" target="_blank" class="btn-whatsapp-small" title="Comprar por WhatsApp">
                             <svg viewBox="0 0 24 24" fill="currentColor">
@@ -103,6 +149,39 @@
         
         noResults.style.display = 'none';
         productsGrid.innerHTML = productosFiltrados.map(crearTarjetaProducto).join('');
+    }
+
+    async function loadSettings() {
+        try {
+            const { data } = await supabaseClient
+                .from('site_settings')
+                .select('*')
+                .eq('id', 1)
+                .single();
+            if (data) {
+                siteSettings = data;
+                WHATSAPP_NUMBER = data.whatsapp || WHATSAPP_NUMBER;
+            }
+        } catch (e) {
+            console.warn('Error loading settings, using defaults:', e);
+        }
+    }
+
+    function renderizarCategorias() {
+        const container = document.querySelector('.categories');
+        const cats = siteSettings?.categories || ['general'];
+        container.innerHTML = `
+            <button class="category-btn active" data-category="all">Todos</button>
+            ${cats.map(c => `<button class="category-btn" data-category="${c}">${c.charAt(0).toUpperCase() + c.slice(1)}</button>`).join('')}
+        `;
+        container.querySelectorAll('.category-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                container.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentCategory = btn.dataset.category;
+                renderizarProductos();
+            });
+        });
     }
 
     async function loadProducts() {
@@ -178,6 +257,9 @@
         
         const mensajeWhatsApp = `Hola, me interesa este producto: ${producto.name} - ${producto.price}`;
         modalWhatsapp.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(mensajeWhatsApp)}`;
+
+        const modalShareBtn = document.getElementById('modalShareBtn');
+        modalShareBtn.onclick = () => shareUrl(producto);
         
         modal.classList.add('active');
         document.body.style.overflow = 'hidden';
@@ -192,15 +274,6 @@
     searchInput.addEventListener('input', (e) => {
         currentSearch = e.target.value.trim();
         renderizarProductos();
-    });
-
-    categoryButtons.forEach(btn => {
-        btn.addEventListener('click', () => {
-            categoryButtons.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            currentCategory = btn.dataset.category;
-            renderizarProductos();
-        });
     });
 
     modalClose.addEventListener('click', cerrarModal);
@@ -239,7 +312,9 @@
     document.getElementById('themeToggle').addEventListener('click', toggleTheme);
 
     // Init
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', async () => {
         initTheme();
+        await loadSettings();
+        renderizarCategorias();
         loadProducts();
     });

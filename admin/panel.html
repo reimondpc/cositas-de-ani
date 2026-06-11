@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Panel - Cositas de Ani</title>
+    <link rel="icon" href="../favicon.png" type="image/png">
     <link rel="stylesheet" href="admin.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,12 +19,27 @@
                 <span>Panel Admin</span>
             </div>
             <nav class="sidebar-nav">
-                <a href="#" class="nav-item active">
+                <button class="nav-item active" data-section="products">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
                     </svg>
                     Productos
-                </a>
+                </button>
+                <button class="nav-item" data-section="categories">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="4" y1="6" x2="20" y2="6"></line>
+                        <line x1="4" y1="12" x2="20" y2="12"></line>
+                        <line x1="4" y1="18" x2="20" y2="18"></line>
+                    </svg>
+                    Categorías
+                </button>
+                <button class="nav-item" data-section="settings">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3"></circle>
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1Z"></path>
+                    </svg>
+                    Configuración
+                </button>
                 <a href="../index.html" class="nav-item" target="_blank">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
@@ -53,32 +69,71 @@
         </aside>
 
         <main class="main-content">
-            <header class="content-header">
-                <h1>Productos</h1>
-                <button class="btn-add" id="addProductBtn">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="12" y1="5" x2="12" y2="19"></line>
-                        <line x1="5" y1="12" x2="19" y2="12"></line>
+            <!-- Products Section -->
+            <div id="productsSection">
+                <header class="content-header">
+                    <h1>Productos</h1>
+                    <button class="btn-add" id="addProductBtn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        Agregar Producto
+                    </button>
+                </header>
+                <div class="products-grid" id="productsGrid"></div>
+                <div id="loadingState" class="loading-state">
+                    <div class="spinner-large"></div>
+                    <p>Cargando productos...</p>
+                </div>
+                <div id="emptyState" class="empty-state" style="display: none;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
                     </svg>
-                    Agregar Producto
-                </button>
-            </header>
-
-            <div class="products-grid" id="productsGrid">
-                <!-- Products will be loaded here -->
+                    <p>No hay productos aún</p>
+                    <span>Agrega tu primer producto para comenzar</span>
+                </div>
             </div>
 
-            <div id="loadingState" class="loading-state">
-                <div class="spinner-large"></div>
-                <p>Cargando productos...</p>
+            <!-- Categories Section -->
+            <div id="categoriesSection" style="display: none;">
+                <header class="content-header">
+                    <h1>Categorías</h1>
+                    <button class="btn-add" id="addCategorySectionBtn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        Agregar Categoría
+                    </button>
+                </header>
+                <div class="categories-list-admin" id="categoriesAdminList"></div>
+                <div id="categoriesEmpty" class="empty-state" style="display: none;">
+                    <p>No hay categorías</p>
+                    <span>Crea la primera categoría para comenzar</span>
+                </div>
             </div>
 
-            <div id="emptyState" class="empty-state" style="display: none;">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                    <path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
-                </svg>
-                <p>No hay productos aún</p>
-                <span>Agrega tu primer producto para comenzar</span>
+            <!-- Settings Section -->
+            <div id="settingsSection" style="display: none;">
+                <header class="content-header">
+                    <h1>Configuración</h1>
+                </header>
+                <div class="settings-card">
+                    <form id="settingsForm">
+                        <div class="form-group">
+                            <label for="settingsWhatsapp">Número de WhatsApp (sin +)</label>
+                            <input type="text" id="settingsWhatsapp" required placeholder="Ej: 18292727257">
+                        </div>
+                        <div class="form-group">
+                            <label for="settingsSiteName">Nombre de la Tienda</label>
+                            <input type="text" id="settingsSiteName" required placeholder="Ej: Cositas de Ani">
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn-save">Guardar Configuración</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </main>
     </div>
@@ -100,7 +155,7 @@
                     </div>
                     <div class="form-group">
                         <label for="productPrice">Precio (RD$)</label>
-                        <input type="text" id="productPrice" required placeholder="Ej: RD$1,500">
+                        <input type="number" id="productPrice" required min="0" step="any" placeholder="Ej: 1500">
                     </div>
                 </div>
                 <div class="form-group">
@@ -140,7 +195,7 @@
 
     <script>
         const SUPABASE_URL = 'https://eodkpelkplrgqxbmkqka.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVvZGtwZWxrcGxyZ3F4Ym1rcWthIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg3MDU1MjksImV4cCI6MjA5NDI4MTUyOX0.ZWNwMsCZO6P4VcVUjOB9Zt7-95qoWziYuf21fHo7mRU';;
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVvZGtwZWxrcGxyZ3F4Ym1rcWthIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg3MDU1MjksImV4cCI6MjA5NDI4MTUyOX0.ZWNwMsCZO6P4VcVUjOB9Zt7-95qoWziYuf21fHo7mRU';
 
         function initTheme() {
             const savedTheme = localStorage.getItem('catalogue-theme') || 'dark';
@@ -172,6 +227,121 @@
         const imageHidden = document.getElementById('productImages');
 
         let editingProductId = null;
+        let siteSettings = { whatsapp: '18292727257', categories: ['general'], site_name: 'Cositas de Ani' };
+        const productCategory = document.getElementById('productCategory');
+
+        async function loadSettings() {
+            const { data } = await supabaseClient
+                .from('site_settings')
+                .select('*')
+                .eq('id', 1)
+                .single();
+            if (data) {
+                siteSettings = data;
+                document.getElementById('settingsWhatsapp').value = data.whatsapp || '';
+                document.getElementById('settingsSiteName').value = data.site_name || '';
+            }
+        }
+
+        function renderProductCategories() {
+            const cats = siteSettings.categories || ['general'];
+            productCategory.innerHTML = cats.map(c =>
+                `<option value="${c}">${c.charAt(0).toUpperCase() + c.slice(1)}</option>`
+            ).join('');
+        }
+
+        function renderCategoriesAdmin() {
+            const list = document.getElementById('categoriesAdminList');
+            const empty = document.getElementById('categoriesEmpty');
+            const cats = siteSettings.categories || [];
+            if (cats.length === 0) {
+                list.innerHTML = '';
+                empty.style.display = 'flex';
+                return;
+            }
+            empty.style.display = 'none';
+            list.innerHTML = cats.map((cat, i) => `
+                <div class="category-admin-card">
+                    <span class="cat-name">${cat.charAt(0).toUpperCase() + cat.slice(1)}</span>
+                    <div class="cat-actions">
+                        <button class="btn-cat-edit" onclick="editarCategoria(${i})" title="Editar">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"></path>
+                                <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                            </svg>
+                        </button>
+                        <button class="btn-cat-delete" onclick="eliminarCategoria(${i})" title="Eliminar">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="3 6 5 6 21 6"></polyline>
+                                <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function editarCategoria(index) {
+            const cats = siteSettings.categories || [];
+            const oldName = cats[index];
+            const newName = prompt('Editar categoría:', oldName);
+            if (newName && newName.trim().toLowerCase() !== oldName) {
+                cats[index] = newName.trim().toLowerCase();
+                guardarCategorias();
+            }
+        }
+
+        function eliminarCategoria(index) {
+            if (confirm('¿Eliminar esta categoría?')) {
+                const cats = siteSettings.categories || [];
+                cats.splice(index, 1);
+                guardarCategorias();
+            }
+        }
+
+        async function guardarCategorias() {
+            const { error } = await supabaseClient
+                .from('site_settings')
+                .update({
+                    categories: siteSettings.categories || [],
+                    updated_at: new Date().toISOString()
+                })
+                .eq('id', 1);
+            if (error) {
+                showToast('Error al guardar categorías: ' + error.message, 'error');
+            } else {
+                renderCategoriesAdmin();
+                renderProductCategories();
+                showToast('Categorías actualizadas');
+            }
+        }
+
+        function cambiarSeccion(section) {
+            document.querySelectorAll('.nav-item[data-section]').forEach(b => b.classList.remove('active'));
+            document.querySelector(`.nav-item[data-section="${section}"]`).classList.add('active');
+            document.getElementById('productsSection').style.display = section === 'products' ? '' : 'none';
+            document.getElementById('categoriesSection').style.display = section === 'categories' ? '' : 'none';
+            document.getElementById('settingsSection').style.display = section === 'settings' ? '' : 'none';
+            if (section === 'categories') renderCategoriesAdmin();
+        }
+
+        document.querySelectorAll('.nav-item[data-section]').forEach(btn => {
+            btn.addEventListener('click', () => cambiarSeccion(btn.dataset.section));
+        });
+
+        document.getElementById('addCategorySectionBtn').addEventListener('click', () => {
+            const name = prompt('Nombre de la nueva categoría:');
+            if (name && name.trim()) {
+                if (!siteSettings.categories) siteSettings.categories = [];
+                const cat = name.trim().toLowerCase();
+                if (!siteSettings.categories.includes(cat)) {
+                    siteSettings.categories.push(cat);
+                    guardarCategorias();
+                } else {
+                    showToast('La categoría ya existe', 'error');
+                }
+            }
+        });
 
         async function checkAuth() {
             const { data: { session } } = await supabaseClient.auth.getSession();
@@ -234,6 +404,7 @@
         function openModal(isEdit = false) {
             editingProductId = null;
             productForm.reset();
+            renderProductCategories();
             imagePreview.innerHTML = '<span class="preview-placeholder">Selecciona o arrastra una o más imágenes</span>';
             imageHidden.value = '';
             modalTitle.textContent = isEdit ? 'Editar Producto' : 'Agregar Producto';
@@ -265,7 +436,7 @@
                 editingProductId = id;
                 document.getElementById('productId').value = product.id;
                 document.getElementById('productName').value = product.name;
-                document.getElementById('productPrice').value = product.price;
+                document.getElementById('productPrice').value = product.price.replace(/^RD\$/, '').replace(/,/g, '');
                 document.getElementById('productDescription').value = product.description || '';
                 document.getElementById('productCategory').value = product.category;
 
@@ -385,7 +556,7 @@
 
             const product = {
                 name: document.getElementById('productName').value,
-                price: document.getElementById('productPrice').value,
+                price: 'RD$' + document.getElementById('productPrice').value,
                 description: document.getElementById('productDescription').value,
                 category: document.getElementById('productCategory').value,
                 image: imageUrls[0],
@@ -429,6 +600,32 @@
 
         document.getElementById('themeToggle').addEventListener('click', toggleTheme);
 
+        document.getElementById('settingsForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const whatsapp = document.getElementById('settingsWhatsapp').value.trim();
+            const siteName = document.getElementById('settingsSiteName').value.trim();
+            if (!whatsapp || !siteName) {
+                showToast('Completa todos los campos', 'error');
+                return;
+            }
+            const { error } = await supabaseClient
+                .from('site_settings')
+                .upsert({
+                    id: 1,
+                    whatsapp,
+                    site_name: siteName,
+                    categories: siteSettings.categories || ['general'],
+                    updated_at: new Date().toISOString()
+                });
+            if (error) {
+                showToast('Error al guardar: ' + error.message, 'error');
+            } else {
+                siteSettings.whatsapp = whatsapp;
+                siteSettings.site_name = siteName;
+                showToast('Configuración guardada');
+            }
+        });
+
         document.getElementById('logoutBtn').addEventListener('click', async () => {
             await supabaseClient.auth.signOut();
             window.location.href = 'index.html';
@@ -440,7 +637,11 @@
             }
         });
 
-        checkAuth().then(loadProducts);
+        checkAuth().then(async () => {
+            await loadSettings();
+            renderProductCategories();
+            loadProducts();
+        });
     </script>
 </body>
 </html>

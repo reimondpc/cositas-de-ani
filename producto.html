@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cargando producto...</title>
+    <meta name="robots" content="index, follow">
+    <meta property="og:title" content="Cositas de Ani">
+    <meta property="og:description" content="Mirá este producto en Cositas de Ani">
+    <meta property="og:url" content="https://cositasdeani.shop/">
+    <meta property="og:type" content="product">
+    <meta property="og:site_name" content="Cositas de Ani">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Cositas de Ani">
+    <meta name="twitter:description" content="Mirá este producto en Cositas de Ani">
+    <link rel="icon" href="favicon.png" type="image/png">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <header class="header">
+        <div class="header-inner">
+            <a href="/" class="logo" style="text-decoration:none;color:inherit">
+                <h1 class="logo">Cositas <span>de Ani</span></h1>
+            </a>
+            <div class="header-controls">
+                <button id="themeToggle" class="theme-toggle" title="Cambiar tema">
+                    <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="main">
+        <div id="productoContainer" class="producto-container">
+            <div class="loading-state">
+                <div class="spinner-large"></div>
+                <p>Cargando producto...</p>
+            </div>
+        </div>
+        <div id="productoError" class="no-results" style="display:none;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+            <p>Producto no encontrado</p>
+            <a href="/" class="btn-details" style="margin-top:16px;display:inline-block;padding:12px 24px;">Volver al catálogo</a>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2025 Cositas de Ani</p>
+    </footer>
+
+    <style>
+        .loading-state { display:flex; flex-direction:column; align-items:center; justify-content:center; padding:80px 20px; color:var(--text-muted); }
+        .spinner-large { width:40px; height:40px; border:3px solid var(--border-btn); border-top-color:var(--gold); border-radius:50%; animation:spin 0.8s linear infinite; margin-bottom:16px; }
+        @keyframes spin { to { transform:rotate(360deg); } }
+
+        .producto-detail { max-width:900px; margin:0 auto; padding:20px; display:grid; grid-template-columns:1fr 1fr; gap:40px; }
+        .producto-detail .gallery { position:relative; }
+        .producto-detail .gallery img { width:100%; border-radius:12px; aspect-ratio:1; object-fit:cover; }
+        .producto-detail .gallery-nav { position:absolute; top:50%; transform:translateY(-50%); width:40px; height:40px; border-radius:50%; background:var(--bg-elevated); border:1px solid var(--border-btn); color:var(--text-primary); cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:1.2rem; transition:all 0.3s; }
+        .producto-detail .gallery-nav:hover { background:var(--gold); color:var(--bg-deep); }
+        .producto-detail .gallery-prev { left:12px; }
+        .producto-detail .gallery-next { right:12px; }
+        .producto-detail .gallery-counter { position:absolute; bottom:12px; left:50%; transform:translateX(-50%); background:rgba(0,0,0,0.6); color:#fff; padding:4px 12px; border-radius:20px; font-size:0.8rem; }
+        .producto-detail .info { display:flex; flex-direction:column; gap:16px; }
+        .producto-detail .badge { display:inline-block; padding:4px 12px; background:var(--gold); color:var(--bg-deep); border-radius:20px; font-size:0.8rem; font-weight:600; text-transform:capitalize; width:fit-content; }
+        .producto-detail h1 { font-family:'Cormorant Garamond',serif; font-size:2rem; font-weight:500; margin:0; }
+        .producto-detail .price { font-size:1.5rem; color:var(--gold); font-weight:600; }
+        .producto-detail .description { color:var(--text-secondary); line-height:1.6; }
+        .producto-detail .actions { display:flex; gap:12px; margin-top:auto; }
+        .producto-detail .actions a, .producto-detail .actions button { flex:1; padding:14px 20px; border-radius:8px; font-size:1rem; font-weight:600; text-align:center; cursor:pointer; transition:all 0.3s; text-decoration:none; display:flex; align-items:center; justify-content:center; gap:8px; }
+        .producto-detail .btn-wsp { background:#25D366; color:#fff; border:none; }
+        .producto-detail .btn-wsp:hover { background:#20bd5a; }
+        .producto-detail .btn-share-detail { background:var(--bg-elevated); border:1px solid var(--border-btn); color:var(--text-primary); }
+        .producto-detail .btn-share-detail:hover { border-color:var(--gold); color:var(--gold); }
+
+        @media (max-width:768px) {
+            .producto-detail { grid-template-columns:1fr; gap:24px; }
+        }
+    </style>
+
+    <script>
+        const SUPABASE_URL = 'https://eodkpelkplrgqxbmkqka.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVvZGtwZWxrcGxyZ3F4Ym1rcWthIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg3MDU1MjksImV4cCI6MjA5NDI4MTUyOX0.ZWNwMsCZO6P4VcVUjOB9Zt7-95qoWziYuf21fHo7mRU';
+        const { createClient } = window.supabase;
+        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        function initTheme() {
+            const savedTheme = localStorage.getItem('catalogue-theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('catalogue-theme', newTheme);
+        }
+
+        document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+        initTheme();
+
+        function actualizarOG(producto, imagenes) {
+            document.title = producto.name + ' - Cositas de Ani';
+            document.querySelector('meta[property="og:title"]').content = producto.name + ' - Cositas de Ani';
+            document.querySelector('meta[name="twitter:title"]').content = producto.name + ' - Cositas de Ani';
+            document.querySelector('meta[property="og:description"]').content = (producto.description || 'Mirá este producto en Cositas de Ani').slice(0, 200);
+            document.querySelector('meta[name="twitter:description"]').content = (producto.description || 'Mirá este producto en Cositas de Ani').slice(0, 200);
+            document.querySelector('meta[property="og:url"]').content = 'https://cositasdeani.shop/producto?id=' + producto.id;
+            document.querySelector('meta[property="og:image"]').content = imagenes[0];
+            document.querySelector('meta[name="twitter:image"]').content = imagenes[0];
+        }
+
+        function renderizar(producto) {
+            const container = document.getElementById('productoContainer');
+            const imagenes = Array.isArray(producto.images) && producto.images.length > 1
+                ? producto.images
+                : [producto.images?.[0] || producto.image];
+            actualizarOG(producto, imagenes);
+
+            let currentIndex = 0;
+            container.innerHTML = '<div class="producto-detail">' +
+                '<div class="gallery">' +
+                    '<img id="detailImg" src="' + imagenes[0] + '" alt="' + producto.name + '">' +
+                    (imagenes.length > 1 ? '<button class="gallery-nav gallery-prev" id="gPrev">&lsaquo;</button>' : '') +
+                    (imagenes.length > 1 ? '<button class="gallery-nav gallery-next" id="gNext">&rsaquo;</button>' : '') +
+                    (imagenes.length > 1 ? '<span class="gallery-counter" id="gCounter">1 / ' + imagenes.length + '</span>' : '') +
+                '</div>' +
+                '<div class="info">' +
+                    '<span class="badge">' + producto.category + '</span>' +
+                    '<h1>' + producto.name + '</h1>' +
+                    '<p class="price">' + producto.price + '</p>' +
+                    '<p class="description">' + (producto.description || '') + '</p>' +
+                    '<div class="actions">' +
+                        '<button class="btn-share-detail" onclick="compartirProducto(\'' + producto.id + '\')">Compartir</button>' +
+                        '<a href="https://wa.me/18292727257?text=' + encodeURIComponent('Hola, me interesa este producto: ' + producto.name + ' - ' + producto.price) + '" target="_blank" class="btn-wsp">WhatsApp</a>' +
+                    '</div>' +
+                '</div>' +
+            '</div>';
+
+            if (imagenes.length > 1) {
+                document.getElementById('gPrev').addEventListener('click', () => {
+                    currentIndex = (currentIndex - 1 + imagenes.length) % imagenes.length;
+                    document.getElementById('detailImg').src = imagenes[currentIndex];
+                    document.getElementById('gCounter').textContent = (currentIndex + 1) + ' / ' + imagenes.length;
+                });
+                document.getElementById('gNext').addEventListener('click', () => {
+                    currentIndex = (currentIndex + 1) % imagenes.length;
+                    document.getElementById('detailImg').src = imagenes[currentIndex];
+                    document.getElementById('gCounter').textContent = (currentIndex + 1) + ' / ' + imagenes.length;
+                });
+            }
+
+            const wspNumber = '18292727257';
+            const btnWsp = container.querySelector('.btn-wsp');
+            btnWsp.href = 'https://wa.me/' + wspNumber + '?text=' + encodeURIComponent('Hola, me interesa este producto: ' + producto.name + ' - ' + producto.price);
+        }
+
+        function compartirProducto(id) {
+            const url = window.location.origin + '/producto?id=' + id;
+            if (navigator.share) {
+                navigator.share({ title: document.title, url: url }).catch(() => {});
+            } else if (navigator.clipboard) {
+                navigator.clipboard.writeText(url).then(() => {
+                    alert('Link copiado al portapapeles');
+                }).catch(() => {
+                    prompt('Copiá este link:', url);
+                });
+            } else {
+                prompt('Copiá este link:', url);
+            }
+        }
+
+        async function cargarProducto() {
+            const params = new URLSearchParams(window.location.search);
+            const id = params.get('id');
+            if (!id) {
+                document.getElementById('productoContainer').querySelector('.loading-state').style.display = 'none';
+                document.getElementById('productoError').style.display = 'flex';
+                return;
+            }
+            const { data, error } = await supabaseClient
+                .from('products')
+                .select('*')
+                .eq('id', id)
+                .single();
+            if (error || !data) {
+                document.getElementById('productoContainer').innerHTML = '';
+                document.getElementById('productoError').style.display = 'flex';
+                return;
+            }
+
+            let whatsapp = '18292727257';
+            const { data: settings } = await supabaseClient
+                .from('site_settings')
+                .select('whatsapp')
+                .eq('id', 1)
+                .single();
+            if (settings && settings.whatsapp) whatsapp = settings.whatsapp;
+
+            const btnWsp = document.querySelector('.btn-wsp');
+            if (btnWsp) btnWsp.href = 'https://wa.me/' + whatsapp + '?text=' + encodeURIComponent('Hola, me interesa este producto: ' + data.name + ' - ' + data.price);
+
+            renderizar(data);
+        }
+
+        cargarProducto();
+    </script>
+</body>
+</html>

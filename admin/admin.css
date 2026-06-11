@@ -562,6 +562,88 @@ body {
     color: var(--error);
 }
 
+/* Settings */
+.settings-card {
+    max-width: 600px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 32px;
+}
+
+/* Categories Admin */
+.categories-list-admin {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.category-admin-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 16px 20px;
+    width: 100%;
+    max-width: 500px;
+    transition: border-color 0.3s;
+}
+
+.category-admin-card:hover {
+    border-color: var(--border-hover);
+}
+
+.category-admin-card .cat-name {
+    font-size: 1rem;
+    font-weight: 500;
+    text-transform: capitalize;
+}
+
+.cat-actions {
+    display: flex;
+    gap: 6px;
+}
+
+.btn-cat-edit,
+.btn-cat-delete {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-cat-edit svg,
+.btn-cat-delete svg {
+    width: 16px;
+    height: 16px;
+    color: var(--text-secondary);
+}
+
+.btn-cat-edit:hover {
+    border-color: var(--gold);
+}
+
+.btn-cat-edit:hover svg {
+    color: var(--gold);
+}
+
+.btn-cat-delete:hover {
+    border-color: var(--error);
+}
+
+.btn-cat-delete:hover svg {
+    color: var(--error);
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .sidebar {
