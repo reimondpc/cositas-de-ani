@@ -405,7 +405,7 @@
             }
 
             if (result.error) {
-                showToast('Error al guardar producto', 'error');
+                showToast('Error al guardar producto: ' + result.error.message, 'error');
             } else {
                 showToast(editingProductId ? 'Producto actualizado' : 'Producto agregado');
                 closeModal();
