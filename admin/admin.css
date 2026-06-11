@@ -448,30 +448,50 @@ body {
     border-color: var(--gold);
 }
 
-.image-preview {
-    width: 100%;
-    height: 160px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.image-hint {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin: 0;
+}
+
+.image-preview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 8px;
+    min-height: 100px;
+    padding: 8px;
     background: var(--bg-surface);
     border: 1px dashed var(--border-color);
     border-radius: 8px;
-    color: var(--text-muted);
-    font-size: 0.85rem;
-    overflow: hidden;
     transition: border-color 0.3s;
 }
 
-.image-preview.has-image {
+.image-preview-grid:has(.preview-item) {
     border-color: var(--gold);
     border-style: solid;
 }
 
-.image-preview img {
+.preview-placeholder {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    min-height: 80px;
+}
+
+.preview-item {
+    aspect-ratio: 1;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+}
+
+.preview-item img {
     width: 100%;
     height: 100%;
-    object-fit: contain;
+    object-fit: cover;
 }
 
 .form-actions {

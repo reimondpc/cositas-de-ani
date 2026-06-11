@@ -754,6 +754,62 @@ body::before {
 }
 
 /* ----------------------------------------
+   GALERÍA EN MODAL
+   ---------------------------------------- */
+.gallery-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 44px;
+    height: 44px;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 50%;
+    color: white;
+    cursor: pointer;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s, background 0.3s;
+}
+
+.modal-image-section:hover .gallery-nav {
+    opacity: 1;
+}
+
+.gallery-nav:hover {
+    background: rgba(201, 169, 98, 0.8);
+    border-color: var(--gold);
+}
+
+.gallery-nav svg {
+    width: 22px;
+    height: 22px;
+}
+
+.gallery-prev { left: var(--space-md); }
+.gallery-next { right: var(--space-md); }
+
+.gallery-counter {
+    position: absolute;
+    bottom: var(--space-md);
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(10px);
+    padding: 4px 14px;
+    border-radius: var(--radius-lg);
+    font-size: 0.8rem;
+    color: white;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    z-index: 5;
+}
+
+/* ----------------------------------------
    ANIMACIONES
    ---------------------------------------- */
 @keyframes fadeInUp {

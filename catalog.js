@@ -40,15 +40,24 @@
     let currentCategory = 'all';
     let currentSearch = '';
     let selectedProductForModal = null;
+    let currentImageIndex = 0;
+
+    function obtenerImagenes(producto) {
+        if (Array.isArray(producto.images) && producto.images.length > 0) return producto.images;
+        if (producto.images) return [producto.images];
+        if (producto.image) return [producto.image];
+        return [];
+    }
 
     function crearTarjetaProducto(producto) {
         const mensajeWhatsApp = `Hola, me interesa este producto: ${producto.name} - ${producto.price}`;
         const linkWhatsApp = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(mensajeWhatsApp)}`;
         
+        const imagenes = obtenerImagenes(producto);
         return `
             <article class="product-card" data-id="${producto.id}">
                 <div class="product-image-container">
-                    <img src="${producto.image}" alt="${producto.name}" class="product-image" loading="lazy">
+                    <img src="${imagenes[0]}" alt="${producto.name}" class="product-image" loading="lazy">
                     <span class="product-badge">${producto.category}</span>
                     <div class="product-overlay"></div>
                     <div class="product-line"></div>
@@ -137,6 +146,23 @@
         document.head.appendChild(script);
     }
 
+    function mostrarImagenModal(index) {
+        const producto = products.find(p => p.id === selectedProductForModal);
+        if (!producto) return;
+        const imagenes = obtenerImagenes(producto);
+        if (index < 0 || index >= imagenes.length) return;
+        currentImageIndex = index;
+        modalImage.src = imagenes[index];
+        modalImage.alt = producto.name;
+
+        const prevBtn = document.getElementById('galleryPrev');
+        const nextBtn = document.getElementById('galleryNext');
+        const counter = document.getElementById('galleryCounter');
+        if (prevBtn) prevBtn.style.display = imagenes.length > 1 ? 'flex' : 'none';
+        if (nextBtn) nextBtn.style.display = imagenes.length > 1 ? 'flex' : 'none';
+        if (counter) counter.textContent = `${index + 1} / ${imagenes.length}`;
+    }
+
     function abrirModal(productId) {
         const producto = products.find(p => p.id === productId);
         
@@ -144,8 +170,7 @@
         
         selectedProductForModal = producto.id;
         
-        modalImage.src = producto.image;
-        modalImage.alt = producto.name;
+        mostrarImagenModal(0);
         modalName.textContent = producto.name;
         modalPrice.textContent = producto.price;
         modalDescription.textContent = producto.description || '';
@@ -181,9 +206,33 @@
     modalClose.addEventListener('click', cerrarModal);
     modalOverlay.addEventListener('click', cerrarModal);
 
+    document.getElementById('galleryPrev').addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (currentImageIndex > 0) mostrarImagenModal(currentImageIndex - 1);
+    });
+
+    document.getElementById('galleryNext').addEventListener('click', (e) => {
+        e.stopPropagation();
+        const producto = products.find(p => p.id === selectedProductForModal);
+        if (!producto) return;
+        const imagenes = obtenerImagenes(producto);
+        if (currentImageIndex < imagenes.length - 1) mostrarImagenModal(currentImageIndex + 1);
+    });
+
     document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && modal.classList.contains('active')) {
+        if (!modal.classList.contains('active')) return;
+        if (e.key === 'Escape') {
             cerrarModal();
+        } else if (e.key === 'ArrowLeft') {
+            const producto = products.find(p => p.id === selectedProductForModal);
+            if (!producto) return;
+            const imagenes = obtenerImagenes(producto);
+            if (currentImageIndex > 0) mostrarImagenModal(currentImageIndex - 1);
+        } else if (e.key === 'ArrowRight') {
+            const producto = products.find(p => p.id === selectedProductForModal);
+            if (!producto) return;
+            const imagenes = obtenerImagenes(producto);
+            if (currentImageIndex < imagenes.length - 1) mostrarImagenModal(currentImageIndex + 1);
         }
     });
 

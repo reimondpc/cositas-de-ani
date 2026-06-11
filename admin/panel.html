@@ -118,13 +118,12 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="productImage">Imagen</label>
+                        <label for="productImageInput">Imágenes</label>
                         <div class="image-upload-wrapper">
-                            <input type="file" id="productImageInput" accept="image/*" class="image-input">
-                            <div class="image-preview" id="imagePreview">
-                                <span>Selecciona o arrastra una imagen</span>
-                            </div>
-                            <input type="hidden" id="productImage">
+                            <input type="file" id="productImageInput" accept="image/*" multiple class="image-input">
+                            <div class="image-preview-grid" id="imagePreview"></div>
+                            <input type="hidden" id="productImages">
+                            <p class="image-hint">Selecciona una o más imágenes para el producto</p>
                         </div>
                     </div>
                 </div>
@@ -170,7 +169,7 @@
         const toast = document.getElementById('toast');
         const imageInput = document.getElementById('productImageInput');
         const imagePreview = document.getElementById('imagePreview');
-        const imageHidden = document.getElementById('productImage');
+        const imageHidden = document.getElementById('productImages');
 
         let editingProductId = null;
 
@@ -203,9 +202,11 @@
             }
 
             emptyState.style.display = 'none';
-            productsGrid.innerHTML = products.map(product => `
+            productsGrid.innerHTML = products.map(product => {
+                const imgSrc = Array.isArray(product.images) ? product.images[0] : product.image;
+                return `
                 <div class="product-card-admin">
-                    <img src="${product.image}" alt="${product.name}" class="product-img">
+                    <img src="${imgSrc}" alt="${product.name}" class="product-img">
                     <div class="product-info-admin">
                         <h3>${product.name}</h3>
                         <span class="product-price">${product.price}</span>
@@ -226,14 +227,14 @@
                         </button>
                     </div>
                 </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
         function openModal(isEdit = false) {
             editingProductId = null;
             productForm.reset();
-            imagePreview.innerHTML = '<span>Selecciona o arrastra una imagen</span>';
-            imagePreview.classList.remove('has-image');
+            imagePreview.innerHTML = '<span class="preview-placeholder">Selecciona o arrastra una o más imágenes</span>';
             imageHidden.value = '';
             modalTitle.textContent = isEdit ? 'Editar Producto' : 'Agregar Producto';
             productModal.classList.add('active');
@@ -244,6 +245,13 @@
             productModal.classList.remove('active');
             document.body.style.overflow = '';
             editingProductId = null;
+        }
+
+        function obtenerArrayImagenes(product) {
+            if (Array.isArray(product.images)) return product.images;
+            if (product.images) return [product.images];
+            if (product.image) return [product.image];
+            return [];
         }
 
         async function editProduct(id) {
@@ -260,9 +268,12 @@
                 document.getElementById('productPrice').value = product.price;
                 document.getElementById('productDescription').value = product.description || '';
                 document.getElementById('productCategory').value = product.category;
-                imageHidden.value = product.image;
-                imagePreview.innerHTML = `<img src="${product.image}" alt="Preview">`;
-                imagePreview.classList.add('has-image');
+
+                const images = obtenerArrayImagenes(product);
+                imageHidden.value = JSON.stringify(images);
+                imagePreview.innerHTML = images.map(url =>
+                    `<div class="preview-item"><img src="${url}" alt="Preview"></div>`
+                ).join('');
                 modalTitle.textContent = 'Editar Producto';
                 productModal.classList.add('active');
                 document.body.style.overflow = 'hidden';
@@ -286,46 +297,62 @@
         }
 
         imageInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (ev) => {
-                    imagePreview.innerHTML = `<img src="${ev.target.result}" alt="Preview">`;
-                    imagePreview.classList.add('has-image');
-                };
-                reader.readAsDataURL(file);
+            const files = Array.from(e.target.files);
+            if (files.length > 0) {
+                Promise.all(files.map(file => new Promise(resolve => {
+                    const reader = new FileReader();
+                    reader.onload = (ev) => resolve(ev.target.result);
+                    reader.readAsDataURL(file);
+                }))).then(previews => {
+                    imagePreview.innerHTML = previews.map(src =>
+                        `<div class="preview-item"><img src="${src}" alt="Preview"></div>`
+                    ).join('');
+                });
             }
         });
 
-        async function uploadImage(file) {
-            const ext = file.name.split('.').pop();
-            const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-            const { data, error } = await supabaseClient.storage
-                .from('product-images')
-                .upload(fileName, file, {
-                    cacheControl: '3600',
-                    upsert: false
-                });
-            if (error) {
-                showToast('Error al subir imagen: ' + error.message, 'error');
-                return null;
+        async function uploadImages(files) {
+            const urls = [];
+            for (const file of files) {
+                const ext = file.name.split('.').pop();
+                const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+                const { data, error } = await supabaseClient.storage
+                    .from('product-images')
+                    .upload(fileName, file, {
+                        cacheControl: '3600',
+                        upsert: false
+                    });
+                if (error) {
+                    showToast('Error al subir imagen: ' + error.message, 'error');
+                    return null;
+                }
+                urls.push(`${SUPABASE_URL}/storage/v1/object/public/product-images/${fileName}`);
             }
-            return `${SUPABASE_URL}/storage/v1/object/public/product-images/${fileName}`;
+            return urls;
         }
 
         async function saveProduct(e) {
             e.preventDefault();
 
-            const file = imageInput.files[0];
-            let imageUrl = imageHidden.value;
+            const files = Array.from(imageInput.files);
 
-            if (file) {
-                showToast('Subiendo imagen...', 'success');
-                const uploadedUrl = await uploadImage(file);
-                if (!uploadedUrl) return;
-                imageUrl = uploadedUrl;
-            } else if (!imageUrl) {
-                showToast('Debes seleccionar una imagen', 'error');
+            let imageUrls = [];
+            const existingJson = imageHidden.value;
+            if (existingJson) {
+                try {
+                    imageUrls = JSON.parse(existingJson);
+                } catch {
+                    imageUrls = existingJson ? [existingJson] : [];
+                }
+            }
+
+            if (files.length > 0) {
+                showToast('Subiendo imágenes...', 'success');
+                const uploadedUrls = await uploadImages(files);
+                if (!uploadedUrls) return;
+                imageUrls = uploadedUrls;
+            } else if (imageUrls.length === 0) {
+                showToast('Debes seleccionar al menos una imagen', 'error');
                 return;
             }
 
@@ -334,7 +361,7 @@
                 price: document.getElementById('productPrice').value,
                 description: document.getElementById('productDescription').value,
                 category: document.getElementById('productCategory').value,
-                image: imageUrl
+                images: imageUrls
             };
 
             let result;
