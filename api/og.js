@@ -21,7 +21,7 @@ module.exports = async (req, res) => {
   const title = `${product.name} - Cositas de Ani`;
   const desc = (product.description || 'Mirá este producto en Cositas de Ani').slice(0, 200);
   const url = `https://cositasdeani.shop/producto?id=${id}`;
-  const ogImageUrl = image ? `https://cositasdeani.shop/api/img?id=${encodeURIComponent(id)}` : '';
+  const ogImageUrl = image ? `https://cositasdeani.shop/og-img/${encodeURIComponent(id)}` : '';
 
   res.writeHead(200, {
     'Content-Type': 'text/html; charset=utf-8',

@@ -140,9 +140,9 @@
             document.querySelector('meta[property="og:description"]').content = (producto.description || 'Mirá este producto en Cositas de Ani').slice(0, 200);
             document.querySelector('meta[name="twitter:description"]').content = (producto.description || 'Mirá este producto en Cositas de Ani').slice(0, 200);
             document.querySelector('meta[property="og:url"]').content = 'https://cositasdeani.shop/producto?id=' + producto.id;
-            document.querySelector('meta[property="og:image"]').content = 'https://cositasdeani.shop/api/img?id=' + producto.id;
+            document.querySelector('meta[property="og:image"]').content = 'https://cositasdeani.shop/og-img/' + producto.id;
             document.querySelector('meta[property="og:image:alt"]').content = producto.name;
-            document.querySelector('meta[name="twitter:image"]').content = 'https://cositasdeani.shop/api/img?id=' + producto.id;
+            document.querySelector('meta[name="twitter:image"]').content = 'https://cositasdeani.shop/og-img/' + producto.id;
         }
 
         function renderizar(producto) {

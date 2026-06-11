@@ -1,5 +1,6 @@
 {
   "rewrites": [
-    { "source": "/producto", "destination": "/api/og" }
+    { "source": "/producto", "destination": "/api/og" },
+    { "source": "/og-img/:id", "destination": "/api/img?id=:id" }
   ]
 }
