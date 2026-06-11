@@ -114,6 +114,13 @@
         document.getElementById('themeToggle').addEventListener('click', toggleTheme);
         initTheme();
 
+        function obtenerImagenes(producto) {
+            if (Array.isArray(producto.images) && producto.images.length > 0) return producto.images;
+            if (producto.images) return [producto.images];
+            if (producto.image) return [producto.image];
+            return [];
+        }
+
         function actualizarOG(producto, imagenes) {
             document.title = producto.name + ' - Cositas de Ani';
             document.querySelector('meta[property="og:title"]').content = producto.name + ' - Cositas de Ani';
@@ -127,9 +134,7 @@
 
         function renderizar(producto) {
             const container = document.getElementById('productoContainer');
-            const imagenes = Array.isArray(producto.images) && producto.images.length > 1
-                ? producto.images
-                : [producto.images?.[0] || producto.image];
+            const imagenes = obtenerImagenes(producto);
             actualizarOG(producto, imagenes);
 
             let currentIndex = 0;

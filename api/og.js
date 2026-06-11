@@ -1,6 +1,12 @@
 const SUPABASE_URL = 'https://eodkpelkplrgqxbmkqka.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVvZGtwZWxrcGxyZ3F4Ym1rcWthIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg3MDU1MjksImV4cCI6MjA5NDI4MTUyOX0.ZWNwMsCZO6P4VcVUjOB9Zt7-95qoWziYuf21fHo7mRU';
 
+const BOT_RE = /bot|crawler|spider|facebookexternalhit|whatsapp|twitterbot|slack|telegram|discord|embedly|snapchat|pinterest/i;
+
+function esBot(ua) {
+  return BOT_RE.test(ua);
+}
+
 module.exports = async (req, res) => {
   const id = req.query.id;
 
@@ -32,12 +38,15 @@ module.exports = async (req, res) => {
 
   const title = `${product.name} - Cositas de Ani`;
   const description = (product.description || 'Mirá este producto en Cositas de Ani').slice(0, 200);
-  const image = Array.isArray(product.images) && product.images.length > 0
-    ? product.images[0]
-    : (product.image || '');
+  const rawImages = product.images;
+  const image = Array.isArray(rawImages) && rawImages.length > 0
+    ? rawImages[0]
+    : (typeof rawImages === 'string' ? rawImages : (product.image || ''));
   const url = `https://cositasdeani.shop/producto?id=${id}`;
 
-  const html = `<!DOCTYPE html>
+  // If it's a crawler, return OG tags only (no meta refresh)
+  if (esBot(req.headers['user-agent'] || '')) {
+    const html = `<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
@@ -53,17 +62,21 @@ module.exports = async (req, res) => {
   <meta name="twitter:title" content="${title}">
   <meta name="twitter:description" content="${description}">
   <meta name="twitter:image" content="${image}">
-  <meta http-equiv="refresh" content="0;url=${url}">
   <link rel="canonical" href="${url}">
 </head>
 <body>
-  <script>window.location.href = '${url}';</script>
+  <script>window.location.href='${url}'</script>
 </body>
 </html>`;
 
-  res.writeHead(200, {
-    'Content-Type': 'text/html; charset=utf-8',
-    'Cache-Control': 'public, max-age=3600'
-  });
-  res.end(html);
+    res.writeHead(200, {
+      'Content-Type': 'text/html; charset=utf-8',
+      'Cache-Control': 'public, max-age=86400'
+    });
+    return res.end(html);
+  }
+
+  // For real users, redirect to the product page
+  res.writeHead(302, { Location: `/producto.html?id=${id}` });
+  res.end();
 };
