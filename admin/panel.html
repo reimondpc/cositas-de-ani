@@ -403,6 +403,7 @@
 
         function openModal(isEdit = false) {
             editingProductId = null;
+            imageInput.value = '';
             productForm.reset();
             renderProductCategories();
             imagePreview.innerHTML = '<span class="preview-placeholder">Selecciona o arrastra una o más imágenes</span>';
@@ -426,6 +427,8 @@
         }
 
         async function editProduct(id) {
+            imageInput.value = '';
+
             const { data: product } = await supabaseClient
                 .from('products')
                 .select('*')
