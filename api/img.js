@@ -1,4 +1,3 @@
-const sharp = require('sharp');
 const SUPABASE_URL = 'https://eodkpelkplrgqxbmkqka.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVvZGtwZWxrcGxyZ3F4Ym1rcWthIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg3MDU1MjksImV4cCI6MjA5NDI4MTUyOX0.ZWNwMsCZO6P4VcVUjOB9Zt7-95qoWziYuf21fHo7mRU';
 
@@ -27,19 +26,15 @@ module.exports = async (req, res) => {
     if (!imgRes.ok) { res.writeHead(502); return res.end(); }
 
     const buffer = Buffer.from(await imgRes.arrayBuffer());
-
-    const resized = await sharp(buffer)
-      .resize(1200, 630, { fit: 'cover', position: 'center' })
-      .jpeg({ quality: 85, mozjpeg: true })
-      .toBuffer();
+    const contentType = imgRes.headers.get('content-type') || 'image/jpeg';
 
     res.writeHead(200, {
-      'Content-Type': 'image/jpeg',
-      'Content-Length': resized.length,
+      'Content-Type': contentType,
+      'Content-Length': buffer.length,
       'Cache-Control': 'public, max-age=86400, immutable',
       'Access-Control-Allow-Origin': '*'
     });
-    res.end(resized);
+    res.end(buffer);
   } catch (_) {
     res.writeHead(502);
     res.end();
