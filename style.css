@@ -316,7 +316,7 @@ body::before {
 .main {
     max-width: 1400px;
     margin: 0 auto;
-    padding: var(--space-xl);
+    padding: 100px var(--space-xl) var(--space-xl);
 }
 
 .products-grid {
@@ -895,6 +895,10 @@ body::before {
     .header-inner {
         flex-direction: column;
         gap: var(--space-md);
+    }
+    
+    .main {
+        padding-top: 160px;
     }
     
     .search-wrapper {

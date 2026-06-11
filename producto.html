@@ -93,7 +93,14 @@
         .producto-detail .btn-share-detail:hover { border-color:var(--gold); color:var(--gold); }
 
         @media (max-width:768px) {
-            .producto-detail { grid-template-columns:1fr; gap:24px; }
+            .producto-detail { grid-template-columns:1fr; gap:16px; }
+            .header { padding: var(--space-md); }
+            .producto-detail { padding:12px; }
+            .producto-detail h1 { font-size:1.4rem; }
+            .producto-detail .price { font-size:1.2rem; }
+            .producto-detail .gallery img { aspect-ratio:auto; max-height:50vh; }
+            .producto-detail .actions { flex-direction:column; }
+            .producto-detail .actions a, .producto-detail .actions button { padding:12px 16px; font-size:0.9rem; }
         }
     </style>
 
